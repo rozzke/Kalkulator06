@@ -28,10 +28,13 @@ public class MainActivity extends AppCompatActivity {
         Button btn7 = findViewById(R.id.btn7);
         Button btn8 = findViewById(R.id.btn8);
         Button btn9 = findViewById(R.id.btn9);
+        Button btn6 = findViewById(R.id.btn6);
 
         btn7.setOnClickListener(v -> append7());
         btn8.setOnClickListener(v -> append8());
         btn9.setOnClickListener(v -> append9());
+
+        btn6.setOnClickListener(v -> appendSymbol("6"));
     }
 
     private void append9() {
@@ -44,5 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void append7() {
         tvDisplay.setText(tvDisplay.getText().toString() + "7");
+    }
+
+    private void appendSymbol(String symbol) {
+        tvDisplay.setText(tvDisplay.getText().toString() + symbol);
     }
 }

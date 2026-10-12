@@ -23,33 +23,112 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tvDisplay   = findViewById(R.id.tvDisplay);
+        tvDisplay = findViewById(R.id.tvDisplay);
+        View.OnClickListener symbolListener =
+                v -> appendSymbol(((Button) v).getText().toString());
 
-        Button btn7 = findViewById(R.id.btn7);
-        Button btn8 = findViewById(R.id.btn8);
-        Button btn9 = findViewById(R.id.btn9);
-        Button btn6 = findViewById(R.id.btn6);
+        int[] symbolIds = {
+                R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
+                R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9,
+                R.id.btncomma
+        };
+        for (int id : symbolIds) {
+            findViewById(id).setOnClickListener(symbolListener);
+        }
 
-        btn7.setOnClickListener(v -> append7());
-        btn8.setOnClickListener(v -> append8());
-        btn9.setOnClickListener(v -> append9());
+        View.OnClickListener operationListener = v -> {
+            if (v.getId() == R.id.btnadd) {
+                setOperation("+");
+            } else if (v.getId() == R.id.btnsub) {
+                setOperation("-");
+            } else if (v.getId() == R.id.btnx) {
+                setOperation("*");
+            } else {
+                setOperation("/");
+            }
+        };
+        findViewById(R.id.btnadd).setOnClickListener(operationListener);
+        findViewById(R.id.btnsub).setOnClickListener(operationListener);
+        findViewById(R.id.btnx).setOnClickListener(operationListener);
+        findViewById(R.id.btndiv).setOnClickListener(operationListener);
 
-        btn6.setOnClickListener(v -> appendSymbol("6"));
-    }
-
-    private void append9() {
-        tvDisplay.setText(tvDisplay.getText().toString() + "9");
-    }
-
-    private void append8() {
-        tvDisplay.setText(tvDisplay.getText().toString() + "8");
-    }
-
-    private void append7() {
-        tvDisplay.setText(tvDisplay.getText().toString() + "7");
+        // pojedyncze przyciski - własne lambdy
+        findViewById(R.id.btnequals).setOnClickListener(v -> calculate());
+        findViewById(R.id.btnc).setOnClickListener(v -> clearAll());
     }
 
     private void appendSymbol(String symbol) {
-        tvDisplay.setText(tvDisplay.getText().toString() + symbol);
+        String current = tvDisplay.getText().toString();
+
+        if (startNewNumber) {
+            tvDisplay.setText(symbol.equals(",") ? "0," : symbol);
+            startNewNumber = false;
+            return;
+        }
+        if (symbol.equals(",") && current.contains(",")) {
+            return;                        
+        }
+        tvDisplay.setText(current + symbol);
+    }
+
+    private void setOperation(String newOperation) {
+        storedValue = readDisplay();
+        operation = newOperation;
+        startNewNumber = true;
+    }
+
+    private void calculate() {
+        if (operation.isEmpty()) {
+            return;
+        }
+
+        double second = readDisplay();
+
+        if (operation.equals("/") && second == 0) {
+            Toast.makeText(this, R.string.error_divide_zero, Toast.LENGTH_SHORT).show();
+            clearAll();
+            return;
+        }
+
+        double result;
+        if (operation.equals("+")) {
+            result = storedValue + second;
+        } else if (operation.equals("-")) {
+            result = storedValue - second;
+        } else if (operation.equals("*")) {
+            result = storedValue * second;
+        } else {
+            result = storedValue / second;
+        }
+
+        showResult(result);
+        operation = "";
+        startNewNumber = true;
+    }
+
+    private double readDisplay() {
+        String text = tvDisplay.getText().toString().replace(',', '.');
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private void showResult(double result) {
+        if (result == Math.rint(result) && Math.abs(result) < 1e15) {
+            tvDisplay.setText(String.valueOf((long) result));
+        } else {
+            String text = String.format(Locale.US, "%.2f", result);
+            tvDisplay.setText(text.replace('.', ','));
+        }
+    }
+
+    private void clearAll() {
+        tvDisplay.setText(R.string.display_start);
+        storedValue = 0;
+        operation = "";
+        startNewNumber = true;
+
     }
 }

@@ -11,6 +11,67 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    private int counter = 0;
+    private int totalclicks = 0;
+
+    private TextView tvCounter;
+    private TextView tvTotalClicks;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.klikacz);
+
+        tvCounter = findViewById(R.id.tvCounter);
+        tvTotalClicks = findViewById(R.id.tvTotalClicks);
+
+        Button btnplus = findViewById(R.id.btnplus);
+        Button btnminus = findViewById(R.id.btnminus);
+        Button btnreset  = findViewById(R.id.btnreset);
+
+        btnplus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counter ++;
+                totalclicks ++;
+                update();
+            }
+        });
+        btnminus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counter --;
+                totalclicks ++;
+                update();
+            }
+        });
+        btnreset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counter = 0;
+                update();
+            }
+        });
+    }
+    private void update() {
+        tvCounter.setText(String.valueOf(counter));
+        tvTotalClicks.setText(String.valueOf(totalclicks));
+
+    }
+}
+/*package com.example.kalkulator;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
     private TextView tvDisplay;
 
     private double storedValue = 0;
@@ -131,4 +192,7 @@ public class MainActivity extends AppCompatActivity {
         startNewNumber = true;
 
     }
-}
+}*/
+
+
+
